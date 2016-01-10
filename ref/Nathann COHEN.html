@@ -1,0 +1,351 @@
+
+<!-- saved from url=(0043)http://www.steinertriples.fr/ncohen/tut/LP/ -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Nathann COHEN</title>
+
+
+<link rel="stylesheet" type="text/css" href="./Nathann COHEN_files/style.css">
+<script async="" src="./Nathann COHEN_files/analytics.js"></script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-26928228-1', 'steinertriples.fr');
+  ga('require', 'displayfeatures');
+  ga('send', 'pageview');
+
+</script>
+
+</head><body>
+
+
+<table class="corps">
+<tbody><tr><td style="text-align:left;">
+    <a href="http://steinertriples.fr/ncohen/" class="hollow_link">
+    <font size="6">Nathann COHEN</font>
+    </a>
+</td><td style="text-align:right;">
+<a href="http://algo.lri.fr/">ALGO Research Group</a> <br>
+<a href="http://www.lri.fr/">Laboratoire de Recherche en Informatique</a><br>
+nathann <i>dot</i> cohen <i>'at'</i> gmail <i>dot</i> com
+
+</td></tr>
+
+</tbody></table>
+<table class="corps"><tbody><tr><td>
+<hr>
+    <table width="100%">
+      <tbody><tr><td valign="top" style="width:45%" align="center">
+Sage patches <a href="http://www.steinertriples.fr/ncohen/tut/LP/contributions">written</a> / <a href="http://trac.sagemath.org/sage_trac/query?status=closed&status=needs_info&status=needs_review&status=needs_work&status=new&status=positive_review&max=500&order=milestone&col=id&col=summary&col=status&col=type&col=priority&col=milestone&col=component&reviewer=~Nathann+Cohen&desc=1">reviewed</a> <br><br>
+         <a href="http://steinertriples.fr/ncohen/tut/Graphs/">Graph tutorial</a> – <a href="http://steinertriples.fr/ncohen/tut/LP/">Linear Programming Tutorial</a> – <a href="http://sagebook.gforge.inria.fr/">Sagebook</a><br>
+<a href="http://steinertriples.fr/ncohen/tut/LP_examples/">Some LP in Sage</a>
+<br><br>
+
+<br><br><i>If you have some code which could be useful to Sage, if you can help us review patches... Or even if you just have any question about Sage's graphs or the use of Linear Programming -- send me an email ! :-)</i>
+         </td>
+</tr></tbody></table>
+<hr>
+
+
+<center><h1>Linear Programming in Sage</h1>Nathann Cohen<br><i>nathann (this round thing) cohen (the weird 'a') gmail (same round thing) com</i></center><br><br>
+
+
+<i>The Linear Programs, when practically dealing with graphs are a *<b>GREAT</b>* tool. There are many very good solvers around, and they are now available in Sage. This means that using them only takes a couple of lines, and writing an algorithm to solve the matching problem takes about 5 minutes, which is already more than enough.</i>
+
+<!--
+<table align=center><tr><td>
+<a href=#few>In a few words</a><br>
+<a href=#generator>Let G be a Graph</a><br>
+<a href=#func>What is a Graph good for ?</a><br>
+<a href=#example>Several examples</a><br>
+<a href=#LP>Mixed Integer Linear Program in Sage</a><br>
+
+</td></tr></table>
+-->
+
+<br><br><br><h3>What is a Linear Program ? </h3>
+
+ <p>
+	A linear program is the sum of two information : 
+</p><ul>
+<li>A linear function, called the objective, which is to be maximized or minimized ( for example 2 x + y ) </li>
+    <li>Linear constraints on the variables ( for example, 3 x + y &lt; 2 and 2 x + 3 y &lt; 8 )</li>
+</ul>
+	 
+	The solver will then try to find a solution to the system of 
+	constraints such that the objective function is optimized, and 
+	return the values of the variables. 
+<p></p>
+	 
+	 
+<br><br><br><h3>What is a Mixed Integer Linear Program ? </h3>
+	 
+<p>	
+It is simply a Linear Program such that some variables are forced 
+to take integer values instead of real values. This difference becomes 
+very important when one learns that solving a Linear Program can be done 
+in polynomial time while solving a general Mixed Integer Linear Program 
+is usually NP-Complete ( = it can take exponential time, according to a  
+widely-spread belief that P is not equal to NP) 
+</p>
+	 
+<br><br><br><h3>Why is Linear Programming so useful ? </h3>
+	
+<p> 
+	Linear Programming is very useful in many Optimization and  
+	Graph-Theoretical problems because of its wide range of expression.  
+	Most of the time, a natural Linear Program can be easily written  
+	to solve a problem whose solution will be quickly computed thanks  
+	to the wealth of heuristics already contained in Linear Program  
+	Solvers. It is often hard to theoretically find out the execution  
+	time of a Linear Program, though they give very interesting results  
+	in practice. 
+</p>
+<p> 
+	For more information, you can consult the Wikipedia page dedicated to  
+	Linear Programming : <a href="http://en.wikipedia.org/wiki/Linear_programming">http://en.wikipedia.org/wiki/Linear_programming</a>
+</p>
+	 
+<br><br><br><h3>How can I solve a linear program using Sage ? </h3>
+
+
+<p></p>
+
+	 
+<p>
+	I have been trying to keep the use of MILP in Sage as easy as possible, and to have it look like what we draw on blackboard. If it takes two lines to write it on a blackboard, then it should be the same in Sage.</p>
+
+<p>
+Sage can solve Linear Programs or Mixed Integer Linear Programs through  
+	the class 'MixedIntegerLinearProgram' defined in 'sage.numerical.mip'. To illustrate how it can be used, we will try to solve one easy problem </p>
+	
+<p></p> 
+<center><img src="./Nathann COHEN_files/lp1.jpg"></center>
+
+<p>
+First, we define our MixedIntegerLinearProgram object as a maximization problem
+</p>
+<pre>  sage: p=MixedIntegerLinearProgram( maximization=True ) 
+</pre>
+<p>We then define the objective using p[1] and p[2] as variables. Not that we could have picked `p["x1"]` and `p["x2"]`, or even `p[("x",1)]` and `p[("x",2)]` : any hashable Sage object is a valid key, as it would be in an usual Python dictionary !</p>
+<pre>  sage: p.set_objective( 2*p[1]+p[2] ) 
+</pre>
+<p>
+The two constraints :
+</p>
+<pre>  sage: p.add_constraint( 3*p[1]+4*p[2], max = 2.5 ) 
+  sage: p.add_constraint( 1.5*p[1]+0.5*p[2], min = 0.5, max = 4 ) 
+</pre>
+<p>Our problem is now defined, and we can now ask Sage to solve it.<br><i>( be assured that you have installed the Sage package for Coin-OR CBC or GLPK. If you do not, see the Solvers section at the bottom of this page )</i></p>
+<pre>  sage: p.solve()
+  1.6666666666666665 
+</pre>
+<p>The value returned by the ``solve`` method is the optimal value of the objective functions. In order to obtain the optimal values, you have to use the ``get_value`` </p>
+<pre>  sage: print "The optimal values are x_1="+str(p.get_values(p[1]))+"x_2="str(p.get_values(p[2]))
+</pre>
+<p>All in all, here is how to solve this system </p>
+<pre>  sage: p=MixedIntegerLinearProgram( maximization=True )
+  sage: p.set_objective( 2*p[1]+p[2] )
+  sage: p.add_constraint( 3*p[1]+4*p[2], max=2.5 )
+  sage: p.add_constraint( 1.5*p[1]+0.5*p[2], max=4,min=0.5 )
+  sage: p.solve()
+  1.6666666666666665
+  sage: print "The optimal values are x_1 = "+str(p.get_values(p[1]))+", x_2 = "+str(p.get_values(p[2]))
+  The optimal values are x_1 = 0.833333333333, x_2 = 0.0
+</pre>
+	
+<br><br><br><br><br><h2>Dictionaries of variables in ``MixedIntegerLinearProgram``</h2>
+
+<p>For more complex Linear Programs, it is sometimes useful to associate many parameters to the same object. Instead of using just one dictionary, it is possible to create many of them using the method ``new_variable`` : if several objects `B1, B2, ...` all have both a "value" and a "cost", the two being variables of the same linear program, you can define two dictionaries to store them</p>
+<pre>  sage: value = p.new_variable()
+  sage: cost = p.new_variable()
+</pre>
+<p>It is now possible to define constraints mixing the two different kinds of variables</p>
+<pre>  sage: p.add_constraint( cost[ B1 ] +  3*value[ B2 ], max = 9)
+</pre>
+
+<!--
+<p>
+A variable linked to an instance of ``MixedIntegerLinearProgram`` behaves exactly as 
+a dictionary would. It is declared the following way :
+</p>
+
+<pre>	 
+  sage: p=MixedIntegerLinearProgram() 
+  sage: variable=p.new_variable() 
+</pre>
+	 
+
+<p>
+	The variable ``variable`` can contain as many keys as you 
+	would like, each of them being formally `unique`. For example 
+	the following constraint ( where `P` denotes the pressure, 
+	and `T` the remperature ) : 
+</p>
+	 
+<center><img src=eqn1.jpg></center>
+
+	Can be written ( quite naturally, I hope ! ) this way :
+<pre>	 
+  sage: p=MixedIntegerLinearProgram()
+
+  sage: temperature=p.new_variable()
+  sage: pressure=p.new_variable()
+  sage: x=p.new_variable()
+  sage: cost=p.new_variable()
+  sage: flow=p.new_variable(dim=2)
+
+  sage: p.add_constraint(2*temperature["Madrid"]+3*temperature["London"] 
+             -pressure["Seattle"]+flow[3][5]+8*cost[(1,3)]+x[3],max=5)   
+</pre> 
+<p>
+	This example is just meant to show you the different possibilities 
+	offered to you when you use the ``MixedIntegerLinearProgram`` class. You will not need  
+	to declare so many variables in usual applications. 
+</p>
+	
+<p> 
+	Notice how the variable ``flow`` is defined : you can use any hashable  
+	object as a key for a ``MIPVariable``, but if you think you need 
+	more than one dimension, you need to explicitely say it when 
+	calling ``MixedIntegerLinearProgram.new_variable()`` 
+</p>
+-->     
+
+
+	 
+<br><br><br><br><br><h2>Some famous examples </h2>
+	 
+<h3>Vertex Cover in a graph </h3>
+<p>	 
+	In the Vertex Cover problem, we are given a graph `G` and we want to find  
+	a subset `S` of its vertices of minimal cardinality such that each edge  
+	`e` is incident to at least one vertex of `S`. In order to achieve it, we  
+	define a binary variable `b_v` for each vertex `v`. 
+</p>
+
+<center><img src="./Nathann COHEN_files/cover.jpg"></center>
+
+In the linear program, the syntax is exactly the same :
+	 
+<pre>  sage: g=graphs.PetersenGraph() 
+  sage: p=MixedIntegerLinearProgram(maximization=False) 
+  sage: b=p.new_variable() 
+  sage: for (u,v) in g.edges(labels=None): 
+  ...:      p.add_constraint(b[u]+b[v],min=1) 
+  sage: p.set_objective(sum([b[v] for v in g]))
+  sage: p.set_binary(b) 
+  sage: p.solve()
+  6.0
+
+  sage: b = p.get_values(b)
+  sage: print b
+  {0: 0.0, 1: 1.0, 2: 0.0, 3: 1.0, 4: 1.0, 5: 1.0, 6: 1.0, 7: 1.0, 8: 0.0, 9: 0.0}
+
+  sage: print [v for v in g if b[v]==1]
+  [1, 3, 4, 5, 6, 7]
+</pre>
+	     
+<center><img src="./Nathann COHEN_files/example_cover.png"></center>
+
+<br><br><br><h3>Maximum matching in a Graph </h3>
+<p>
+	In the maximum matching problem, we are given a graph `G`, and we are 
+	looking for a set of edges `M` of maximum cardinality such 
+	that no two edges from `M` are adjacent : 
+</p>
+
+<center><img src="./Nathann COHEN_files/matching.jpg"></center>
+
+	Here is how this is solved through Sage on a Petersen Graph :
+<pre> 
+  sage: g=graphs.PetersenGraph() 
+  sage: p=MixedIntegerLinearProgram() 
+  sage: b=p.new_variable() 
+  sage: B = lambda x, y : b[Set([x,y])]
+
+  sage: for u in g: 
+  ...:    p.add_constraint(sum([B(u,v) for v in g.neighbors(u)]),max=1) 
+  
+  sage: p.set_objective(sum([B(u,v) for (u,v) in g.edges(labels=None)]))
+
+  sage: p.solve()
+  sage: b = p.get_values(b)
+  sage: print [(u,v) for (u,v) in g.edges(labels=None) if B(u,v) == 1]
+  [(0, 5), (1, 6), (2, 7), (3, 8), (4, 9)]
+</pre>
+	 
+<p>And the next step is ``p.solve()`` ! </p>
+	 
+<center><img src="./Nathann COHEN_files/example_matching.png"></center>
+
+
+<br><br><br><h3>Maximum Independent Set</h3>
+A maximum independent set in a graph is a maximum set of vertices which are not connected to each other. It can be easily formulated as a LP program
+
+<center><img src="./Nathann COHEN_files/mis.jpg"><br></center> <br>
+... and here is how you can do it in Sage :
+<pre>  sage: G = graphs.PetersenGraph()
+  sage: LP = MixedIntegerLinearProgram(maximization=True)
+  sage: b = LP.new_variable()
+
+  sage: # We define the objective
+  sage: LP.set_objective(sum([b[v] for v in G]))
+
+  sage: # For any edge, we define a constraint
+  sage: for (u,v) in G.edges(labels=None):
+  ...       LP.add_constraint(b[u]+b[v],max=1)
+
+  sage: # The variable b is binary
+  sage: LP.set_binary(b)
+  
+  sage: # The .solve() functions returns the objective value
+  sage: LP.solve()
+  4.0
+  sage: b_sol = LP.get_values(b)
+  sage: print b_sol
+  {0: 1.0, 1: 0.0, 2: 1.0, 3: 0.0, 4: 0.0, 5: 0.0, 6: 0.0, 7: 0.0, 8: 1.0, 9: 1.0}
+</pre>
+<center><img src="./Nathann COHEN_files/example_mis.jpg"></center>
+
+	 
+<h2>Solvers </h2>
+<p>	 
+	Sage solves linear programs by calling specific libraries. Two are available  
+	for the moment : 
+	</p><ul>
+	  <li>GLPK (<a href="http://www.gnu.org/software/glpk/">website</a>) : A Linear Program solver from <a href="http://www.gnu.org/">GNU</a></li>
+<li>CBC (<a href="http://www.coin-or.org/projects/Cbc.xml">website</a>) : Integer Linear Program solver from <a href="http://www.coin-or.org/">COIN-OR</a></li>
+<li>CPLEX (<a href="http://www-01.ibm.com/software/integration/optimization/cplex-optimizer/">website</a>) : Integer Linear Program solver from <a href="http://www-01.ibm.com/software/websphere/products/optimization/">IBM ILOG</a>. CPLEX is proprietary but free for researchers and students !</li>
+</ul>
+<p></p>
+<p> 
+  To install them if they are not available on your installation of Sage, type :
+</p><pre>  sage: # To install GLPK 
+  sage: install_package('glpk') 
+  sage: # To install Coin-OR Branch and Cut ( CBC ) 
+  sage: install_package('cbc') 
+</pre>
+
+  Depending on the version you are using, it may be a good idea to run in a console the following line 
+<pre>  sage -b
+</pre>
+  So that Sage notices a new package has been installed !
+<p></p>
+
+
+
+<br><br><br><br><br>
+<h2><a name="help">Get help and documentation</a></h2><hr>
+Short of the two very useful tips discussed in the previous section (the "Tabulation" key and the question mark "?" at the end of a line), there are three ways to obtain help :
+<ul>
+  <li>The Sage-support Google group (<a href="http://groups.google.fr/group/sage-support">here</a>)</li>
+  <li>Sage's documentation page (<a href="http://www.sagemath.org/doc/">here</a>), containing for example :
+    <ul>
+      <li><a href="http://www.sagemath.org/doc/tutorial/index.html">The tutorials</a> (basic explanations on several topics)</li>
+      <li><a href="http://www.sagemath.org/doc/reference/index.html">The reference manual</a> containing help for all of Sage's functions</li>
+    </ul>
+  </li><li>Sage's IRC Channel : sage-support@irc.freenode.net</li>
+  <li>and .... do not hesitate to send me an email if you have any question ! ;-)</li>
+</ul>
+</td></tr></tbody></table></body></html>

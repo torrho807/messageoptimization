@@ -1,0 +1,75 @@
+
+a:link {
+  text-decoration: underline;
+ color:black;
+ }
+a:visited {
+  text-decoration: underline;
+ color:black;
+ }
+a:hover {
+ color:f60;
+ }
+#main td:hover {
+background-color:fda;
+border-top:1px solid black;
+}
+#main td {
+border:1px solid white;
+}
+td:hover > div {
+ display:block;
+}
+.corps {
+  width:700px;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:20px;
+ }
+
+td {
+  font-size:14px;    
+
+}
+
+.me {
+  float:top;
+  margin-right:30px;
+ }
+
+.element {
+  padding-left:20px;
+ }
+h3 {
+ color:55ddaa;
+}
+
+h2 {
+ color:55ddaa;
+}
+
+
+hr {
+ height:1px;
+ color:#fdf;
+}
+
+.hollow_link:link {
+  text-decoration: none;
+ }
+.hollow_link:visited {
+  text-decoration: none;
+ }
+
+pre {
+    background: #eeeeee;
+
+}
+
+a.trac:visited,a.trac:link {
+    color: #bbbbbb;
+    font-size:12px;
+}
+a.trac:hover {
+    color:f60;
+}
